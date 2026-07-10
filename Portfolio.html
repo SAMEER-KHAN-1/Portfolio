@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Sameer Khan — Developer & AI Builder</title>
+<meta name="description" content="Sameer Khan — Full Stack & Android developer building clean websites, Android apps, and AI-powered tools. An immersive 3D portfolio." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="space.css" />
+<link rel="preload" href="images/thumb-dermatology.jpg" as="image" />
+<link rel="preload" href="images/thumb-furniture.jpg" as="image" />
+<link rel="preload" href="images/thumb-pediatric.jpg" as="image" />
+<link rel="preload" href="images/thumb-frootza.jpg" as="image" />
+<link rel="preload" href="images/model-racecar.jpg" as="image" />
+<link rel="preload" href="images/model-drone.webp" as="image" />
+<link rel="preload" href="images/model-jammer.webp" as="image" />
+<link rel="preload" href="images/model-smartcity.jpg" as="image" />
+</head>
+<body class="space">
+
+<!-- Loader -->
+<div class="loader" id="loader">
+  <div class="loader__core"></div>
+  <div class="loader__txt">Entering orbit…</div>
+</div>
+
+<!-- Backdrop -->
+<canvas id="stars"></canvas>
+<div class="nebula nebula--1"></div>
+<div class="nebula nebula--2"></div>
+<div class="nebula nebula--3"></div>
+<div class="glow" id="glow"></div>
+
+<!-- 3D SCENE -->
+<div class="scene-stage" id="stage">
+  <div class="world" id="world">
+
+    <!-- 00 · HERO -->
+    <section class="panel" data-section="hero" data-screen-label="Hero">
+      <div class="panel__card card--text">
+        <span class="eyebrow">Portfolio — 2026</span>
+        <h1 class="hero-name">Sameer<br />Khan</h1>
+        <p class="hero-role">Developer &amp; <em>AI builder</em> — clean websites, Android apps, and intelligent tools.</p>
+        <div class="hero-meta">
+          <span class="pill"><span class="dot"></span> Available for work</span>
+          <span class="pill">India · Remote</span>
+          <span class="pill">Willing to relocate</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01 · ABOUT -->
+    <section class="panel" data-section="about" data-screen-label="About">
+      <div class="panel__card card--text">
+        <span class="eyebrow">(01) — About</span>
+        <p class="big-statement">I build practical, easy-to-use products across web, mobile, and <em>AI</em> — tools that actually ship.</p>
+        <div class="stats">
+          <div class="stat"><div class="k">5<em>+</em></div><div class="v">Shipped projects</div></div>
+          <div class="stat"><div class="k">4</div><div class="v">Client sites live</div></div>
+          <div class="stat"><div class="k">Web · Mobile · AI</div><div class="v">Across the stack</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 · STACK -->
+    <section class="panel" data-section="stack" data-screen-label="Stack">
+      <div class="panel__card card--text stack-card">
+        <span class="eyebrow">(02) — Toolkit</span>
+        <h2 class="panel-h">The <em>stack</em></h2>
+        <div class="stack-grid">
+          <div class="stack-cell"><div class="stack-cell__cat">Languages</div><div class="stack-cell__items"><span>JavaScript</span><span>Python</span><span>Kotlin</span><span>C++</span><span>HTML</span><span>CSS</span></div></div>
+          <div class="stack-cell"><div class="stack-cell__cat">Frontend</div><div class="stack-cell__items"><span>React.js</span><span>Next.js</span><span>Tailwind</span></div></div>
+          <div class="stack-cell"><div class="stack-cell__cat">Backend</div><div class="stack-cell__items"><span>Node.js</span><span>Express</span><span>FastAPI</span></div></div>
+          <div class="stack-cell"><div class="stack-cell__cat">Mobile</div><div class="stack-cell__items"><span>Android</span><span>Java / Kotlin</span><span>Voice Input</span></div></div>
+          <div class="stack-cell"><div class="stack-cell__cat">AI &amp; Data</div><div class="stack-cell__items"><span>OpenAI API</span><span>LLMs</span><span>Whisper.cpp</span><span>Phi-3</span></div></div>
+          <div class="stack-cell"><div class="stack-cell__cat">Tools</div><div class="stack-cell__items"><span>Supabase</span><span>Firebase</span><span>Git</span><span>Arduino</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 · WORK (horizontal reel) -->
+    <section class="panel panel--reel" data-section="work" data-screen-label="Work">
+      <div class="panel__card reel-card" data-reel>
+        <div class="reel-head">
+          <span class="eyebrow">(03) — Selected Work</span>
+          <span class="reel-progress"><b class="reelNow">1</b> / 6 · swipe sideways · ↓ to skip</span>
+        </div>
+        <div class="reel-viewport">
+          <div class="reel-track">
+
+            <!-- Orvyn AI -->
+            <div class="reel-item">
+              <div class="card card--feature glass" data-expandable data-href="https://github.com/SAMEER-KHAN-1/Orvyn-AI/releases" data-open-label="GitHub Release">
+                <div class="card__inner">
+                  <div class="feature__visual">
+                    <div class="feature__orb"><div class="feature__icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3" fill="#fff" stroke="none"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="22"/></svg>
+                    </div></div>
+                  </div>
+                  <div class="feature__text">
+                    <span class="kicker">01 — Featured · Android AI</span>
+                    <h3>Orvyn <em>AI</em></h3>
+                    <p>A voice-controlled Android assistant that runs tasks from natural speech — open apps, fetch info, trigger system actions. Built with integrated speech-to-text and text-to-speech for smooth, hands-free interaction.</p>
+                    <div class="tags"><span class="tag">Android</span><span class="tag">Java</span><span class="tag">Kotlin</span><span class="tag">Speech-to-Text</span><span class="tag">TTS</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lecture AI -->
+            <div class="reel-item">
+              <div class="card card--feature glass" data-expandable data-href="https://github.com/SAMEER-KHAN-1/Lecture.ai" data-open-label="GitHub">
+                <div class="card__inner">
+                  <div class="feature__visual">
+                    <div class="feature__orb" style="background:radial-gradient(circle at 38% 32%,#c7b3ff,#b06bff 45%,#5a2f9f 100%);"><div class="feature__icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    </div></div>
+                  </div>
+                  <div class="feature__text">
+                    <span class="kicker">02 — Featured · Web AI</span>
+                    <h3>Lecture <em>AI</em></h3>
+                    <p>A web app that turns audio into structured notes — key points, summaries, and practice questions. Uses Whisper for transcription and Phi-3 for on-device content processing.</p>
+                    <div class="tags"><span class="tag">Web</span><span class="tag">Whisper</span><span class="tag">Phi-3</span><span class="tag">LLMs</span><span class="tag">Python</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dermatology -->
+            <div class="reel-item">
+              <div class="card card--site glass" data-expandable data-href="https://venerable-raindrop-d3be66.netlify.app/" data-open-label="Open live site">
+                <div class="card__inner">
+                  <div class="browser">
+                    <div class="browser__bar"><i></i><i></i><i></i><span class="browser__url">linwood-dermatology.app</span></div>
+                    <div class="browser__screen"><img src="images/thumb-dermatology.jpg" alt="Dermatology clinic website preview" decoding="async" /></div>
+                  </div>
+                  <div class="site__meta">
+                    <div><h4>Dermatology Clinic</h4><span class="cat">Healthcare</span><p class="site__desc">A clean, trust-building site for a skin clinic — services, treatments, and an easy path to booking.</p></div>
+                    <span class="site__visit">Tap to expand ↗</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Furniture -->
+            <div class="reel-item">
+              <div class="card card--site glass" data-expandable data-href="https://cool-duckanoo-d14eed.netlify.app/" data-open-label="Open live site">
+                <div class="card__inner">
+                  <div class="browser">
+                    <div class="browser__bar"><i></i><i></i><i></i><span class="browser__url">norda-furniture.app</span></div>
+                    <div class="browser__screen"><img src="images/thumb-furniture.jpg" alt="Furniture store website preview" decoding="async" /></div>
+                  </div>
+                  <div class="site__meta">
+                    <div><h4>Furniture Store</h4><span class="cat">E-commerce</span><p class="site__desc">An e-commerce storefront for a modern furniture brand — rich product imagery and a smooth browse-to-cart flow.</p></div>
+                    <span class="site__visit">Tap to expand ↗</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pediatric -->
+            <div class="reel-item">
+              <div class="card card--site glass" data-expandable data-href="https://whimsical-blancmange-1101fe.netlify.app/" data-open-label="Open live site">
+                <div class="card__inner">
+                  <div class="browser">
+                    <div class="browser__bar"><i></i><i></i><i></i><span class="browser__url">wonderyears-pediatric.app</span></div>
+                    <div class="browser__screen"><img src="images/thumb-pediatric.jpg" alt="Pediatric clinic website preview" decoding="async" /></div>
+                  </div>
+                  <div class="site__meta">
+                    <div><h4>Pediatric Clinic</h4><span class="cat">Healthcare</span><p class="site__desc">A warm, friendly site for a children's clinic — services, care info, and simple parent-facing booking.</p></div>
+                    <span class="site__visit">Tap to expand ↗</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Frootza -->
+            <div class="reel-item">
+              <div class="card card--site glass" data-expandable data-href="https://fabulous-marigold-40bbcb.netlify.app/" data-open-label="Open live site">
+                <div class="card__inner">
+                  <div class="browser">
+                    <div class="browser__bar"><i></i><i></i><i></i><span class="browser__url">frootza.app</span></div>
+                    <div class="browser__screen"><img src="images/thumb-frootza.jpg" alt="Frootza grocery &amp; food delivery website preview" decoding="async" /></div>
+                  </div>
+                  <div class="site__meta">
+                    <div><h4>Frootza — Moradabad</h4><span class="cat">Grocery &amp; Food Delivery</span><p class="site__desc">A live grocery &amp; food-delivery web app for Moradabad — 30-minute delivery, category browsing, and WhatsApp ordering. A real, working product.</p></div>
+                    <span class="site__visit">Tap to expand ↗</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · LAB (horizontal reel) -->
+    <section class="panel panel--reel" data-section="lab" data-screen-label="Lab">
+      <div class="panel__card reel-card" data-reel>
+        <div class="reel-head">
+          <span class="eyebrow">(04) — The Hardware Lab</span>
+          <span class="reel-progress"><b class="reelNow">1</b> / 4 · swipe sideways · ↓ to skip</span>
+        </div>
+        <div class="reel-viewport">
+          <div class="reel-track">
+
+            <!-- RC Car -->
+            <div class="reel-item">
+              <div class="card card--model glass" data-expandable>
+                <div class="card__inner">
+                  <div class="model__frame">
+                    <span class="model__no">01</span><span class="model__kind">RC / Robotics</span>
+                    <img src="images/model-racecar.jpg" alt="Custom ESP32-CAM RC car with L298N motor driver" decoding="async" />
+                  </div>
+                  <div class="model__body">
+                    <h4>Live-FPV <em>RC Car</em></h4>
+                    <p>A first-person RC car that streams live video straight to your phone. An ESP32-CAM handles both the onboard camera feed and the Wi-Fi link, while an L298N dual H-bridge drives the motors off a lithium-cell pack. The phone connects to the car's own Wi-Fi and sends steering &amp; throttle in real time — hitting a top speed of around 23 km/h.</p>
+                    <div class="tags"><span class="tag">ESP32-CAM</span><span class="tag">L298N Driver</span><span class="tag">Live FPV Feed</span><span class="tag">Wi-Fi Control</span><span class="tag tag--hi">23 km/h Top Speed</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Drone -->
+            <div class="reel-item">
+              <div class="card card--model glass" data-expandable>
+                <div class="card__inner">
+                  <div class="model__frame">
+                    <span class="model__no">02</span><span class="model__kind">Aerial</span>
+                    <img src="images/model-drone.webp" alt="Custom carbon-fiber FPV quadcopter drone" decoding="async" />
+                  </div>
+                  <div class="model__body">
+                    <h4>Custom <em>FPV Drone</em></h4>
+                    <p>A lightweight quadcopter built around a Seeed XIAO ESP32-C3 flight brain and a BNO085 9-DOF IMU for orientation fusion. Four 2300KV brushless motors run on 20A BLHeli_S DShot ESCs, powered by a 3S 1300mAh LiPo. The chassis is a hand-laid carbon-fiber composite with 5-inch tri-blade props and a custom-etched copper PCB.</p>
+                    <div class="tags"><span class="tag">XIAO ESP32-C3</span><span class="tag">BNO085 IMU</span><span class="tag">BLHeli_S DShot</span><span class="tag">2300KV Brushless</span><span class="tag">Carbon-Fiber Frame</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Wi-Fi De-auth -->
+            <div class="reel-item">
+              <div class="card card--model glass" data-expandable>
+                <div class="card__inner">
+                  <div class="model__frame">
+                    <span class="model__no">03</span><span class="model__kind">Wireless / Security</span>
+                    <img src="images/model-jammer.webp" alt="ESP8266 module used for Wi-Fi de-authentication research" decoding="async" />
+                  </div>
+                  <div class="model__body">
+                    <h4>Wi-Fi <em>De-auth Tool</em></h4>
+                    <p>A compact network-security demo built on an ESP8266 module. With a small piece of custom firmware, the board performs 802.11 de-authentication — a controlled way to study how Wi-Fi handshakes behave and how resilient a network is to disruption. Built purely as a hands-on lesson in wireless protocols.</p>
+                    <div class="tags"><span class="tag">ESP8266</span><span class="tag">802.11 De-auth</span><span class="tag">Embedded C</span><span class="tag">Network Research</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Smart City -->
+            <div class="reel-item">
+              <div class="card card--model glass" data-expandable>
+                <div class="card__inner">
+                  <div class="model__frame">
+                    <span class="model__no">04</span><span class="model__kind">Smart City</span>
+                    <img src="images/model-smartcity.jpg" alt="Arduino smart-city model with ultrasonic adaptive traffic lights" decoding="async" />
+                  </div>
+                  <div class="model__body">
+                    <h4>Adaptive <em>Traffic Grid</em></h4>
+                    <p>A smart-city traffic system that uses ultrasonic sensors to detect waiting vehicles at each junction. By day it keeps the familiar fixed timing drivers expect; by night — when roads sit empty — it gives green to whoever's actually there, cutting needless waits. Both modes run simultaneously, pairing traditional reliability with sensor-driven efficiency.</p>
+                    <div class="tags"><span class="tag">Arduino Uno</span><span class="tag">Ultrasonic Sensors</span><span class="tag">Adaptive Timing</span><span class="tag">Day / Night Logic</span><span class="tag tag--hi">Energy Saving</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 · CONTACT -->
+    <section class="panel" data-section="contact" data-screen-label="Contact">
+      <div class="panel__card card--text">
+        <span class="eyebrow">(05) — Contact</span>
+        <div class="contact-big">Let's build<br />something <em>great</em></div>
+        <div class="contact-ctas">
+          <a id="contactMe" href="mailto:sameerkhan654kk@gmail.com?subject=Let%27s%20work%20together" class="btn-mail">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+            Contact me <span class="arr">↗</span>
+          </a>
+          <a href="https://wa.me/917060714253" target="_blank" rel="noopener" class="btn-wa">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.174.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.002-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413"/></svg>
+            WhatsApp <span class="arr">↗</span>
+          </a>
+        </div>
+        <div class="contact-soc">
+          <a href="https://github.com/SAMEER-KHAN-1" target="_blank" rel="noopener">GitHub</a>
+          <a href="http://www.linkedin.com/in/sameer-khan-605005181" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="mailto:sameerkhan654kk@gmail.com">Email</a>
+        </div>
+        <div class="contact-copy">© 2026 Sameer Khan — Developer &amp; AI Builder</div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- HUD -->
+<div class="hud-progress"><i id="progFill"></i></div>
+<nav class="hud-dots" id="dots"></nav>
+<div class="hud-counter" id="counter"></div>
+<div class="hud-hint" id="hint"><span class="mouse"></span> Scroll to explore · swipe sideways for projects</div>
+
+<!-- Detail overlay -->
+<div class="detail" id="detail">
+  <button class="detail__close" aria-label="Close">×</button>
+  <div class="detail__body" id="detailBody"></div>
+</div>
+
+<script src="space.js"></script>
+</body>
+</html>
