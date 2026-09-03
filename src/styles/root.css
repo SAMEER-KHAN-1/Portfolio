@@ -1,0 +1,4 @@
+/* The scene layers are all position:fixed siblings of <body> in the
+   original build. `display: contents` makes the React mount point
+   vanish from layout so the stacking order stays exactly the same. */
+#root { display: contents; }
