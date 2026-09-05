@@ -199,6 +199,63 @@ export function useSpaceScene(refs, handlers) {
       scrollTarget = clamp(Math.round(scrollTarget) + dir, 0, N - 1);
     }
 
+    /* ---------- WHEEL: ONE gesture = ONE step, long or short ---------- */
+    /* The first meaningful delta takes the step and LOCKS input; every
+       further event of the same gesture (however long the trackpad
+       momentum tail runs) just re-arms a quiet timer. The lock releases
+       ONLY after true silence — so one scroll, short flick or long drag,
+       always moves exactly one section / one card. The only things that
+       count as a genuinely NEW gesture mid-tail:
+         · direction reverses           (scrolling back)
+         · axis flips vert ↔ horiz      (start browsing a reel) */
+    let wheelLocked = false;
+    let wheelQuiet = null;
+    let lockAxis = null, lockSign = 0;
+    let lastMag = 0;                       // magnitude of the previous event
+    let lastBigT = 0;                      // time of the last MEANINGFUL (>=6) event
+    const WHEEL_QUIET_MS = 250;            // silence that ends a gesture
+    function armWheelRelease() {
+      clearTimeout(wheelQuiet);
+      wheelQuiet = setTimeout(() => { wheelLocked = false; }, WHEEL_QUIET_MS);
+    }
+    function doWheelStep(axis, sign) {
+      wheelLocked = true; lockAxis = "y"; lockSign = sign;
+      armWheelRelease();
+      stepSection(sign);
+    }
+    const onWheel = (e) => {
+      e.preventDefault();
+      const dx = e.deltaX, dy = e.deltaY;
+      const adx = Math.abs(dx), ady = Math.abs(dy);
+      const mag = Math.max(adx, ady);
+      /* Tiny trickle deltas at the very end of a momentum tail must NOT
+         keep the lock alive — that's what made the page feel "stuck" until
+         the mouse moved. They're ignored entirely; the quiet timer keeps
+         running and releases the lock while the tail is still trickling. */
+      if (mag < 6) { lastMag = mag; return; }
+      const now = performance.now();
+      const gap = now - lastBigT;
+      lastBigT = now;
+      const axis = adx > ady ? "x" : "y";
+      const sign = (axis === "x" ? dx : dy) > 0 ? 1 : -1;
+      if (wheelLocked) {
+        /* Same axis, reversed direction = deliberate new gesture. */
+        if (sign !== lockSign && mag > 10) { lastMag = mag; doWheelStep(axis, sign); return; }
+        /* Same axis + direction: a real pause in the stream followed by a
+           clear jump in magnitude is a NEW flick (touching the trackpad
+           cancels momentum, so a genuine re-scroll always shows this gap).
+           A running momentum tail never pauses, so it can't fake this. */
+        if (gap > 90 && mag > Math.max(12, lastMag * 2)) {
+          lastMag = mag; doWheelStep(axis, sign); return;
+        }
+        lastMag = mag;
+        armWheelRelease(); return;
+      }
+      lastMag = mag;
+      doWheelStep(axis, sign);
+    };
+    window.addEventListener("wheel", onWheel, { passive: false });
+
     /* ---------- KEYBOARD ---------- */
     const onKeyDown = (e) => {
       switch (e.key) {
@@ -223,7 +280,9 @@ export function useSpaceScene(refs, handlers) {
     /* ---------- TEARDOWN ---------- */
     return () => {
       cancelAnimationFrame(rafId);
+      clearTimeout(wheelQuiet);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKeyDown);
       motes.forEach((m) => m.el.remove());
     };
