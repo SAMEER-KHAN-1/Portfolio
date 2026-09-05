@@ -270,6 +270,27 @@ export function useSpaceScene(refs, handlers) {
     };
     window.addEventListener("keydown", onKeyDown);
 
+    /* ---------- TOUCH: ONE swipe = ONE step ---------- */
+    let tStartX = 0, tStartY = 0, tDone = false;
+    const onTouchStart = (e) => {
+      const t = e.touches[0];
+      tStartX = t.clientX; tStartY = t.clientY;
+      tDone = false;
+    };
+    const onTouchMove = (e) => {
+      if (tDone) return;
+      const t = e.touches[0];
+      const dxTot = t.clientX - tStartX, dyTot = t.clientY - tStartY;
+      if (Math.max(Math.abs(dxTot), Math.abs(dyTot)) < 40) return;
+      e.preventDefault();
+      tDone = true;
+      if (Math.abs(dxTot) < Math.abs(dyTot)) stepSection(dyTot < 0 ? 1 : -1);
+    };
+    const onTouchEnd = () => { tDone = false; };
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+
     /* ============================================================
        BOOT
        ============================================================ */
@@ -284,6 +305,9 @@ export function useSpaceScene(refs, handlers) {
       window.removeEventListener("resize", resize);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
       motes.forEach((m) => m.el.remove());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
