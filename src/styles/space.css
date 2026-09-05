@@ -102,3 +102,44 @@ em { font-style: normal; }
   mix-blend-mode: screen;
 }
 
+/* ============================================================
+   3D SCENE
+   ============================================================ */
+.scene-stage {
+  position: fixed; inset: 0; z-index: 3;
+  perspective: 1150px;
+  perspective-origin: 50% 50%;
+  pointer-events: none;          /* only cards re-enable */
+}
+.world {
+  position: absolute; inset: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* each station fills the viewport & centres its card */
+.panel {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+.panel__card {
+  width: min(880px, 86vw);
+  transform: translate3d(var(--x, 0px), var(--y, 0px), var(--z, 0px)) rotateY(var(--ry, 0deg));
+  opacity: var(--o, 0);
+  visibility: hidden;            /* JS reveals only the live panels */
+  transform-style: preserve-3d;
+}
+/* Only the 2-3 panels near the camera get a compositor layer */
+.panel__card.is-live { will-change: transform, opacity; }
+
+/* ambient floating debris between stations */
+.mote {
+  position: absolute; top: 50%; left: 50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,239,179,0.75), rgba(255,239,179,0) 70%);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
