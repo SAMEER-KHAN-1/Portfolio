@@ -43,6 +43,25 @@ export function useSpaceScene(refs, handlers) {
     const stationOf = () => clamp(Math.round(scroll), 0, N - 1);
 
     /* ============================================================
+       AMBIENT MOTES
+       ============================================================ */
+    const motes = [];
+    if (!reduce && !isMobile) {
+      const MOTES = 18;
+      for (let i = 0; i < MOTES; i++) {
+        const el = document.createElement("div");
+        el.className = "mote";
+        const size = 3 + Math.random() * 9;
+        const x = (Math.random() * 2 - 1) * 1500;
+        const y = (Math.random() * 2 - 1) * 950;
+        const z = -Math.random() * (N * GAP);
+        el.style.width = el.style.height = size + "px";
+        world.appendChild(el);
+        motes.push({ el, x, y, z });
+      }
+    }
+
+    /* ============================================================
        STARFIELD
        ============================================================ */
     const ctx = canvas.getContext("2d", { alpha: true });
@@ -136,6 +155,13 @@ export function useSpaceScene(refs, handlers) {
           card.style.setProperty("--o", o.toFixed(3));
           card.style.pointerEvents = Math.abs(d) < 0.5 && o > 0.5 ? "auto" : "none";
         }
+        for (let i = 0; i < motes.length; i++) {
+          const m = motes[i];
+          const ez = m.z + camZ;
+          const o = ez <= 0 ? clamp(1 + ez / 2400, 0, 0.85) : clamp(1 - ez / 600, 0, 0.85);
+          m.el.style.opacity = o.toFixed(3);
+          m.el.style.transform = "translate(-50%,-50%) translate3d(" + m.x + "px," + m.y + "px," + m.z + "px)";
+        }
       }
 
       /* Render the starfield every frame while anything moves; halve the
@@ -169,6 +195,7 @@ export function useSpaceScene(refs, handlers) {
     return () => {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
+      motes.forEach((m) => m.el.remove());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
