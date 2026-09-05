@@ -21,6 +21,19 @@ export function useSpaceScene(refs, handlers) {
     const canvas = refs.canvasRef.current;
     if (!world || !canvas) return undefined;
 
+    /* ---------- Panels & reels ---------- */
+    const panels = Array.from(world.querySelectorAll(".panel")).map((el, i) => {
+      const card = el.querySelector(".panel__card");
+      card.style.setProperty("--z", -i * GAP + "px");
+      card.style.setProperty("--o", "0");
+      return {
+        el, card, live: false,
+        label: el.getAttribute("data-screen-label") || "",
+        section: el.getAttribute("data-section") || "",
+      };
+    });
+    const N = panels.length;
+
     /* ============================================================
        STARFIELD
        ============================================================ */

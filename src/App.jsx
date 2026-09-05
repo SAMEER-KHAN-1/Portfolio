@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import Backdrop from "./components/Backdrop.jsx";
+import Panel from "./components/Panel.jsx";
 import { useSpaceScene } from "./hooks/useSpaceScene.js";
 
 export default function App() {
@@ -17,6 +18,12 @@ export default function App() {
 
       <div className="scene-stage" id="stage">
         <div className="world" id="world" ref={worldRef}>
+          <Panel section="hero" label="Hero" />
+          <Panel section="about" label="About" />
+          <Panel section="stack" label="Stack" />
+          <Panel section="work" label="Work" />
+          <Panel section="lab" label="Lab" />
+          <Panel section="contact" label="Contact" />
         </div>
       </div>
     </>
