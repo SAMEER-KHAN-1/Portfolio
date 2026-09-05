@@ -26,19 +26,59 @@ export function useSpaceScene(refs, handlers) {
        ============================================================ */
     const ctx = canvas.getContext("2d", { alpha: true });
     let cw = 0, ch = 0, dpr = 1, cx = 0, cy = 0;
+    const STAR_N = isMobile ? 140 : 360;
+    const MAXZ = 1600, FOCAL = 460;
+    let stars = [];
+    function seedStars() {
+      stars = [];
+      for (let i = 0; i < STAR_N; i++) {
+        stars.push({ x: (Math.random() * 2 - 1) * cw, y: (Math.random() * 2 - 1) * ch, z: Math.random() * MAXZ + 1 });
+      }
+    }
     function resize() {
       dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.75);
       cw = window.innerWidth; ch = window.innerHeight; cx = cw / 2; cy = ch / 2;
       canvas.width = cw * dpr; canvas.height = ch * dpr;
       canvas.style.width = cw + "px"; canvas.style.height = ch + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      seedStars();
     }
     window.addEventListener("resize", resize);
+
+    const STAR = (getComputedStyle(document.documentElement).getPropertyValue("--star") || "255,246,214").trim();
+    function drawStars(vel) {
+      ctx.clearRect(0, 0, cw, ch);
+      const warp = clamp(vel * 0.022, -40, 40);
+      const speed = 0.4 + warp;
+      const streaking = Math.abs(warp) > 3;
+      for (let i = 0; i < stars.length; i++) {
+        const s = stars[i];
+        s.z -= speed;
+        if (s.z < 1) { s.z = MAXZ; s.x = (Math.random() * 2 - 1) * cw; s.y = (Math.random() * 2 - 1) * ch; }
+        else if (s.z > MAXZ) { s.z = 1; s.x = (Math.random() * 2 - 1) * cw; s.y = (Math.random() * 2 - 1) * ch; }
+        const k = FOCAL / s.z;
+        const sx = cx + s.x * k, sy = cy + s.y * k;
+        if (sx < -30 || sx > cw + 30 || sy < -30 || sy > ch + 30) continue;
+        const depth = 1 - s.z / MAXZ;
+        const r = depth * 1.8 + 0.25;
+        const a = clamp(depth * 1.1, 0.05, 1);
+        if (streaking) {
+          const pk = FOCAL / Math.min(MAXZ, s.z + speed);
+          ctx.strokeStyle = "rgba(" + STAR + "," + a * 0.85 + ")";
+          ctx.lineWidth = r;
+          ctx.beginPath(); ctx.moveTo(cx + s.x * pk, cy + s.y * pk); ctx.lineTo(sx, sy); ctx.stroke();
+        } else {
+          ctx.fillStyle = "rgba(" + STAR + "," + a * 0.8 + ")";
+          ctx.beginPath(); ctx.arc(sx, sy, r, 0, 6.283); ctx.fill();
+        }
+      }
+    }
 
     /* ============================================================
        BOOT
        ============================================================ */
     resize();
+    drawStars(0);
 
     /* ---------- TEARDOWN ---------- */
     return () => {
