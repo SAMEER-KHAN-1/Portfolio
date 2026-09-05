@@ -34,6 +34,14 @@ export function useSpaceScene(refs, handlers) {
     });
     const N = panels.length;
 
+    /* ---------- Continuous camera position (in "station" units) ---------- */
+    let scroll = 0;          // current, lerps toward target
+    let scrollTarget = 0;    // where input pushes us
+    let prevCamZ = 0;
+    let rx = 0, ry = 0, trx = 0, try_ = 0;
+
+    const stationOf = () => clamp(Math.round(scroll), 0, N - 1);
+
     /* ============================================================
        STARFIELD
        ============================================================ */
@@ -93,19 +101,47 @@ export function useSpaceScene(refs, handlers) {
     let frame = 0;
     let rafId = 0;
     function tick() {
+      /* smooth vertical glide */
+      scroll += (scrollTarget - scroll) * 0.1;
+      if (Math.abs(scrollTarget - scroll) < 0.0006) scroll = scrollTarget;
+      const camZ = scroll * GAP;
+      const vel = camZ - prevCamZ;
+      prevCamZ = camZ;
+
+      rx += (trx - rx) * 0.12;
+      ry += (try_ - ry) * 0.12;
+
+      const camMoving = Math.abs(vel) > 0.03;
+      const parMoving = Math.abs(trx - rx) > 0.01 || Math.abs(try_ - ry) > 0.01;
+      if (camMoving || parMoving) {
+        world.style.transform = "rotateX(" + rx.toFixed(3) + "deg) rotateY(" + ry.toFixed(3) + "deg) translateZ(" + camZ.toFixed(2) + "px)";
+      }
 
       /* Render the starfield every frame while anything moves; halve the
          rate when fully idle so we don't pin the CPU/GPU at rest. */
-      const moving = false;
+      const moving = camMoving || parMoving || scroll !== scrollTarget;
       frame++;
-      if (moving || (frame & 1) === 0) drawStars(0);
+      if (moving || (frame & 1) === 0) drawStars(vel);
       rafId = requestAnimationFrame(tick);
+    }
+
+    /* ============================================================
+       NAVIGATION — sections (vertical) vs reels (horizontal)
+       ============================================================ */
+    function goToStation(pi) {
+      scrollTarget = clamp(pi, 0, N - 1);
+    }
+    // One step per gesture — based on the COMMITTED target so a queued gesture
+    // always lands exactly one stage further, never skipping.
+    function stepSection(dir) {
+      scrollTarget = clamp(Math.round(scrollTarget) + dir, 0, N - 1);
     }
 
     /* ============================================================
        BOOT
        ============================================================ */
     resize();
+    scroll = 0; scrollTarget = 0;
     rafId = requestAnimationFrame(tick);
 
     /* ---------- TEARDOWN ---------- */
