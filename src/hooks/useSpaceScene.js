@@ -119,6 +119,10 @@ export function useSpaceScene(refs, handlers) {
        ============================================================ */
     function panelOpacity(d) {            // 0 = focus, <0 ahead, >0 passed
       if (d <= 0) return clamp(1 + d / 0.82, 0, 1);
+      /* Passed cards must be FULLY hidden well before they cross the CSS
+         perspective plane (z = 1150px ≈ d = 0.48). Past that plane the
+         browser rasterizes them at near-infinite scale — gigantic layers
+         that pile up and freeze the machine when scrolling back. */
       return clamp(1 - d / 0.3, 0, 1);
     }
 
@@ -152,7 +156,18 @@ export function useSpaceScene(refs, handlers) {
           const d = cf - i;
           const o = panelOpacity(d);
           const card = panels[i].card;
-          card.style.setProperty("--o", o.toFixed(3));
+          // Hard cutoff: never let a card render anywhere near the
+          // perspective plane (z=1150px at d≈0.48) — huge rasterized
+          // layers there are what crashed the page on scroll-back.
+          const live = o > 0.012 && d < 0.42;
+          if (live !== panels[i].live) {
+            panels[i].live = live;
+            // Cull invisible panels from paint/composite — only the 2-3 panels
+            // near the camera ever render, so scroll-back can't pile up layers.
+            card.style.visibility = live ? "visible" : "hidden";
+            card.classList.toggle("is-live", live);
+          }
+          if (live) card.style.setProperty("--o", o.toFixed(3));
           card.style.pointerEvents = Math.abs(d) < 0.5 && o > 0.5 ? "auto" : "none";
         }
         for (let i = 0; i < motes.length; i++) {
