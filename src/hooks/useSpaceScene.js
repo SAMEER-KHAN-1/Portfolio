@@ -199,6 +199,20 @@ export function useSpaceScene(refs, handlers) {
       scrollTarget = clamp(Math.round(scrollTarget) + dir, 0, N - 1);
     }
 
+    /* ---------- KEYBOARD ---------- */
+    const onKeyDown = (e) => {
+      switch (e.key) {
+        case "ArrowDown": case "PageDown": case " ":
+          e.preventDefault(); stepSection(1); return;
+        case "ArrowUp": case "PageUp":
+          e.preventDefault(); stepSection(-1); return;
+        case "Home": e.preventDefault(); goToStation(0); return;
+        case "End": e.preventDefault(); goToStation(N - 1); return;
+        default:
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+
     /* ============================================================
        BOOT
        ============================================================ */
@@ -210,6 +224,7 @@ export function useSpaceScene(refs, handlers) {
     return () => {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("keydown", onKeyDown);
       motes.forEach((m) => m.el.remove());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
