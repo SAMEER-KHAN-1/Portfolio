@@ -75,13 +75,29 @@ export function useSpaceScene(refs, handlers) {
     }
 
     /* ============================================================
+       MAIN LOOP
+       ============================================================ */
+    let frame = 0;
+    let rafId = 0;
+    function tick() {
+
+      /* Render the starfield every frame while anything moves; halve the
+         rate when fully idle so we don't pin the CPU/GPU at rest. */
+      const moving = false;
+      frame++;
+      if (moving || (frame & 1) === 0) drawStars(0);
+      rafId = requestAnimationFrame(tick);
+    }
+
+    /* ============================================================
        BOOT
        ============================================================ */
     resize();
-    drawStars(0);
+    rafId = requestAnimationFrame(tick);
 
     /* ---------- TEARDOWN ---------- */
     return () => {
+      cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
