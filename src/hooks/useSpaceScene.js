@@ -96,8 +96,17 @@ export function useSpaceScene(refs, handlers) {
     }
 
     /* ============================================================
+       OPACITY by depth (neighbours hidden at rest)
+       ============================================================ */
+    function panelOpacity(d) {            // 0 = focus, <0 ahead, >0 passed
+      if (d <= 0) return clamp(1 + d / 0.82, 0, 1);
+      return clamp(1 - d / 0.3, 0, 1);
+    }
+
+    /* ============================================================
        MAIN LOOP
        ============================================================ */
+    let lastCf = NaN;
     let frame = 0;
     let rafId = 0;
     function tick() {
@@ -115,6 +124,18 @@ export function useSpaceScene(refs, handlers) {
       const parMoving = Math.abs(trx - rx) > 0.01 || Math.abs(try_ - ry) > 0.01;
       if (camMoving || parMoving) {
         world.style.transform = "rotateX(" + rx.toFixed(3) + "deg) rotateY(" + ry.toFixed(3) + "deg) translateZ(" + camZ.toFixed(2) + "px)";
+      }
+
+      const cf = scroll;
+      if (cf !== lastCf) {
+        lastCf = cf;
+        for (let i = 0; i < N; i++) {
+          const d = cf - i;
+          const o = panelOpacity(d);
+          const card = panels[i].card;
+          card.style.setProperty("--o", o.toFixed(3));
+          card.style.pointerEvents = Math.abs(d) < 0.5 && o > 0.5 ? "auto" : "none";
+        }
       }
 
       /* Render the starfield every frame while anything moves; halve the
