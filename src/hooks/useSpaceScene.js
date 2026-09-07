@@ -18,6 +18,7 @@ export function useSpaceScene(refs, handlers) {
 
     /* ---------- DOM ---------- */
     const world = refs.worldRef.current;
+    const glow = refs.glowRef.current;
     const canvas = refs.canvasRef.current;
     if (!world || !canvas) return undefined;
 
@@ -291,6 +292,16 @@ export function useSpaceScene(refs, handlers) {
     window.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("touchend", onTouchEnd, { passive: true });
 
+    /* ---------- mouse parallax + glow (fine pointers only) ---------- */
+    const onPointerMove = (e) => {
+      const nx = (e.clientX / window.innerWidth) * 2 - 1;
+      const ny = (e.clientY / window.innerHeight) * 2 - 1;
+      if (!reduce) { try_ = nx * 5; trx = -ny * 3.4; }
+      glow.style.setProperty("--gx", e.clientX + "px");
+      glow.style.setProperty("--gy", e.clientY + "px");
+    };
+    if (!coarse) window.addEventListener("pointermove", onPointerMove);
+
     /* ============================================================
        BOOT
        ============================================================ */
@@ -308,6 +319,7 @@ export function useSpaceScene(refs, handlers) {
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("pointermove", onPointerMove);
       motes.forEach((m) => m.el.remove());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
