@@ -29,3 +29,35 @@ export function FeatureCard({ project, onExpand }) {
   );
 }
 
+export function SiteCard({ project, onExpand }) {
+  return (
+    <div
+      className="card card--site glass"
+      data-expandable=""
+      data-href={project.href}
+      data-open-label={project.openLabel}
+      onClick={onExpand}
+    >
+      <div className="card__inner">
+        <div className="browser">
+          <div className="browser__bar">
+            <i /><i /><i />
+            <span className="browser__url">{project.url}</span>
+          </div>
+          <div className="browser__screen">
+            <img src={project.img} alt={project.alt} decoding="async" />
+          </div>
+        </div>
+        <div className="site__meta">
+          <div>
+            <h4>{project.title}</h4>
+            <span className="cat">{project.cat}</span>
+            <p className="site__desc">{project.desc}</p>
+          </div>
+          <span className="site__visit">Tap to expand ↗</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
