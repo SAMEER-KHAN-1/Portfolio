@@ -2,7 +2,7 @@ import { useRef } from "react";
 import Backdrop from "./components/Backdrop.jsx";
 import Panel from "./components/Panel.jsx";
 import {
-  HeroPanel, AboutPanel,
+  HeroPanel, AboutPanel, StackPanel,
 } from "./components/panels.jsx";
 import { useSpaceScene } from "./hooks/useSpaceScene.js";
 
@@ -23,7 +23,7 @@ export default function App() {
         <div className="world" id="world" ref={worldRef}>
           <HeroPanel />
           <AboutPanel />
-          <Panel section="stack" label="Stack" />
+          <StackPanel />
           <Panel section="work" label="Work" />
           <Panel section="lab" label="Lab" />
           <Panel section="contact" label="Contact" />

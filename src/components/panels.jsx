@@ -1,5 +1,6 @@
 import Panel from "./Panel.jsx";
 import { stats } from "../data/about.js";
+import { stackGroups } from "../data/stack.js";
 
 /* 00 · HERO */
 export function HeroPanel() {
@@ -28,6 +29,26 @@ export function AboutPanel() {
           <div className="stat" key={s.v}>
             <div className="k">{s.k}{s.kEm && <em>{s.kEm}</em>}</div>
             <div className="v">{s.v}</div>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+/* 02 · STACK */
+export function StackPanel() {
+  return (
+    <Panel section="stack" label="Stack" cardClass="card--text stack-card">
+      <span className="eyebrow">(02) — Toolkit</span>
+      <h2 className="panel-h">The <em>stack</em></h2>
+      <div className="stack-grid">
+        {stackGroups.map((g) => (
+          <div className="stack-cell" key={g.cat}>
+            <div className="stack-cell__cat">{g.cat}</div>
+            <div className="stack-cell__items">
+              {g.items.map((it) => <span key={it}>{it}</span>)}
+            </div>
           </div>
         ))}
       </div>
