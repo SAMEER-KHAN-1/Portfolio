@@ -8,6 +8,12 @@
      · Horizontal scroll / swipe → browse projects in a reel
      · On-screen ‹ › arrows      → browse projects with a mouse
    Magnetic settle on idle keeps the scene resting on a station.
+
+   React notes: this is a per-frame rAF engine, so it drives the
+   transforms/opacity straight on the DOM rather than through state.
+   React owns the markup, this hook owns the motion. Only the two
+   low-frequency readouts — active station and reel slide — are
+   pushed back up as state via the onStation / onReelSlide callbacks.
    ============================================================ */
 import { useEffect, useRef } from "react";
 
@@ -15,15 +21,20 @@ const GAP = 2400;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 export function useSpaceScene(refs, handlers) {
+  // Handlers live in a ref so the engine effect stays mount-once.
+  const cb = useRef(handlers);
+  cb.current = handlers;
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const coarse = window.matchMedia("(pointer: coarse)").matches;
     const isMobile = coarse || window.innerWidth < 760;
+    const pad2 = (n) => String(n).padStart(2, "0");
 
     /* ---------- DOM ---------- */
     const world = refs.worldRef.current;
     const glow = refs.glowRef.current;
+    const progFill = refs.progFillRef.current;
     const canvas = refs.canvasRef.current;
     if (!world || !canvas) return undefined;
 
@@ -59,6 +70,7 @@ export function useSpaceScene(refs, handlers) {
     let scrollTarget = 0;    // where input pushes us
     let prevCamZ = 0;
     let rx = 0, ry = 0, trx = 0, try_ = 0;
+    let lastStation = -1;
 
     const stationOf = () => clamp(Math.round(scroll), 0, N - 1);
     const activeReel = () => {
@@ -242,6 +254,7 @@ export function useSpaceScene(refs, handlers) {
           r.slide = ns;
           setReelActive(r, ns);
           updateReelArrows(r, ns);
+          cb.current.onReelSlide?.(panels[i].section, ns);
         }
       }
 
@@ -279,6 +292,10 @@ export function useSpaceScene(refs, handlers) {
           m.el.style.opacity = o.toFixed(3);
           m.el.style.transform = "translate(-50%,-50%) translate3d(" + m.x + "px," + m.y + "px," + m.z + "px)";
         }
+        progFill.style.width = clamp(cf / (N - 1), 0, 1) * 100 + "%";
+
+        const st = stationOf();
+        if (st !== lastStation) { lastStation = st; syncHUD(); }
       }
 
       /* Render the starfield every frame while anything moves; halve the
@@ -299,6 +316,11 @@ export function useSpaceScene(refs, handlers) {
     // always lands exactly one stage further, never skipping.
     function stepSection(dir) {
       scrollTarget = clamp(Math.round(scrollTarget) + dir, 0, N - 1);
+    }
+
+    function syncHUD() {
+      const st = stationOf();
+      cb.current.onStation?.(st, pad2(st + 1), pad2(N));
     }
 
     /* ---------- WHEEL: ONE gesture = ONE step, long or short ---------- */
@@ -435,6 +457,7 @@ export function useSpaceScene(refs, handlers) {
        ============================================================ */
     resize();
     panels.forEach((p) => { if (p.reel) { setReelActive(p.reel, 0); updateReelArrows(p.reel, 0); } });
+    syncHUD();
     scroll = 0; scrollTarget = 0;
     rafId = requestAnimationFrame(tick);
     // Late webfont / image loads can shift the reel metrics — re-measure once.
