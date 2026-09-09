@@ -197,6 +197,26 @@ export function useSpaceScene(refs, handlers) {
       rx += (trx - rx) * 0.12;
       ry += (try_ - ry) * 0.12;
 
+      /* reels lerp + live progress */
+      let reelMoving = false;
+      for (let i = 0; i < panels.length; i++) {
+        const r = panels[i].reel;
+        if (!r) continue;
+        if (Math.abs(r.tx - r.x) > 0.5) {
+          r.x += (r.tx - r.x) * 0.26;
+          r.track.style.transform = "translateX(" + r.x.toFixed(1) + "px)";
+          reelMoving = true;
+        } else if (r.x !== r.tx) {
+          r.x = r.tx; r.track.style.transform = "translateX(" + r.x + "px)";
+        }
+        const ns = reelNearestSlide(r);
+        if (ns !== r.slide) {
+          r.slide = ns;
+          setReelActive(r, ns);
+          updateReelArrows(r, ns);
+        }
+      }
+
       const camMoving = Math.abs(vel) > 0.03;
       const parMoving = Math.abs(trx - rx) > 0.01 || Math.abs(try_ - ry) > 0.01;
       if (camMoving || parMoving) {
@@ -235,7 +255,7 @@ export function useSpaceScene(refs, handlers) {
 
       /* Render the starfield every frame while anything moves; halve the
          rate when fully idle so we don't pin the CPU/GPU at rest. */
-      const moving = camMoving || parMoving || scroll !== scrollTarget;
+      const moving = camMoving || parMoving || reelMoving || scroll !== scrollTarget;
       frame++;
       if (moving || (frame & 1) === 0) drawStars(vel);
       rafId = requestAnimationFrame(tick);
