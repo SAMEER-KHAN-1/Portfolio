@@ -21,6 +21,7 @@ const GAP = 2400;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 export function useSpaceScene(refs, handlers) {
+  const api = useRef({ goToStation: () => {} });
   // Handlers live in a ref so the engine effect stays mount-once.
   const cb = useRef(handlers);
   cb.current = handlers;
@@ -317,6 +318,7 @@ export function useSpaceScene(refs, handlers) {
     function stepSection(dir) {
       scrollTarget = clamp(Math.round(scrollTarget) + dir, 0, N - 1);
     }
+    api.current.goToStation = goToStation;
 
     function syncHUD() {
       const st = stationOf();
@@ -482,4 +484,5 @@ export function useSpaceScene(refs, handlers) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  return api;
 }

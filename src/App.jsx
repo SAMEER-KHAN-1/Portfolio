@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Backdrop from "./components/Backdrop.jsx";
 import Hud from "./components/Hud.jsx";
 import {
@@ -20,7 +20,7 @@ export default function App() {
   const [counter, setCounter] = useState({ now: "01", total: "06" });
   const [reelSlides, setReelSlides] = useState({ work: 0, lab: 0 });
 
-  useSpaceScene(
+  const scene = useSpaceScene(
     { worldRef, glowRef, hintRef, progFillRef, canvasRef },
     {
       onStation: (i, now, total) => { setStation(i); setCounter({ now, total }); },
@@ -28,6 +28,8 @@ export default function App() {
         setReelSlides((s) => (s[section] === slide ? s : { ...s, [section]: slide })),
     },
   );
+
+  const goToStation = useCallback((i) => scene.current.goToStation(i), [scene]);
 
   return (
     <>
@@ -48,6 +50,7 @@ export default function App() {
         stations={STATIONS}
         active={station}
         counter={counter}
+        onGoToStation={goToStation}
         progFillRef={progFillRef}
         hintRef={hintRef}
       />
