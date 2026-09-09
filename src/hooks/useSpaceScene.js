@@ -27,10 +27,24 @@ export function useSpaceScene(refs, handlers) {
       const card = el.querySelector(".panel__card");
       card.style.setProperty("--z", -i * GAP + "px");
       card.style.setProperty("--o", "0");
+      const reelEl = el.querySelector("[data-reel]");
+      let reel = null;
+      if (reelEl) {
+        const viewport = reelEl.querySelector(".reel-viewport");
+        const track = reelEl.querySelector(".reel-track");
+        const items = Array.from(track.querySelectorAll(".reel-item"));
+        reel = {
+          el: reelEl, viewport, track, items, count: items.length,
+          x: 0, tx: 0, slide: 0, itemW: 0, step: 0,
+          prevBtn: viewport.querySelector(".reel-arrow--prev"),
+          nextBtn: viewport.querySelector(".reel-arrow--next"),
+        };
+      }
       return {
         el, card, live: false,
         label: el.getAttribute("data-screen-label") || "",
         section: el.getAttribute("data-section") || "",
+        reel,
       };
     });
     const N = panels.length;
@@ -42,6 +56,44 @@ export function useSpaceScene(refs, handlers) {
     let rx = 0, ry = 0, trx = 0, try_ = 0;
 
     const stationOf = () => clamp(Math.round(scroll), 0, N - 1);
+
+    /* ---------- Reel sizing & geometry ---------- */
+    function sizeReels() {
+      panels.forEach((p) => {
+        if (!p.reel) return;
+        const r = p.reel;
+        const vw = r.viewport.clientWidth || window.innerWidth * 0.9;
+        const small = window.innerWidth < 760;
+        // Cap item width by viewport HEIGHT too, so tall cards (16:9 shot
+        // + meta) always fit on screen instead of spilling past the edges.
+        const maxByH = Math.round((window.innerHeight - (small ? 210 : 270)) * 1.5);
+        const scale = p.section === "lab" ? 0.86 : 1;   // hardware cards run smaller
+        const iw = Math.max(280, Math.round(Math.min(Math.round(vw * (small ? 0.84 : 0.64)), maxByH) * scale));
+        const gap = small ? 14 : 30;
+        r.itemW = iw;
+        r.step = iw + gap;
+        r.track.style.gap = gap + "px";
+        r.items.forEach((it) => { it.style.flex = "0 0 " + iw + "px"; it.style.width = iw + "px"; });
+        const tx = reelTargetX(r, r.slide);
+        r.tx = tx; r.x = tx;
+        r.track.style.transform = "translateX(" + tx + "px)";
+      });
+    }
+    function reelTargetX(reel, slide) {
+      const vw = reel.viewport.clientWidth;
+      return Math.round(vw / 2 - (slide * reel.step + reel.itemW / 2));
+    }
+    function reelNearestSlide(reel) {
+      const vw = reel.viewport.clientWidth;
+      return clamp(Math.round((vw / 2 - reel.itemW / 2 - reel.tx) / reel.step), 0, reel.count - 1);
+    }
+    function setReelActive(reel, slide) {
+      reel.items.forEach((it, idx) => it.classList.toggle("is-active", idx === slide));
+    }
+    function updateReelArrows(reel, slide) {
+      if (reel.prevBtn) reel.prevBtn.disabled = slide <= 0;
+      if (reel.nextBtn) reel.nextBtn.disabled = slide >= reel.count - 1;
+    }
 
     /* ============================================================
        AMBIENT MOTES
@@ -83,6 +135,7 @@ export function useSpaceScene(refs, handlers) {
       canvas.style.width = cw + "px"; canvas.style.height = ch + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       seedStars();
+      sizeReels();
     }
     window.addEventListener("resize", resize);
 
@@ -306,8 +359,12 @@ export function useSpaceScene(refs, handlers) {
        BOOT
        ============================================================ */
     resize();
+    panels.forEach((p) => { if (p.reel) { setReelActive(p.reel, 0); updateReelArrows(p.reel, 0); } });
     scroll = 0; scrollTarget = 0;
     rafId = requestAnimationFrame(tick);
+    // Late webfont / image loads can shift the reel metrics — re-measure once.
+    const onLoad = () => resize();
+    if (document.readyState !== "complete") window.addEventListener("load", onLoad);
 
     /* ---------- TEARDOWN ---------- */
     return () => {
@@ -320,6 +377,7 @@ export function useSpaceScene(refs, handlers) {
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("load", onLoad);
       motes.forEach((m) => m.el.remove());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
