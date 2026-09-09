@@ -2,6 +2,11 @@
    Sameer Khan — Portfolio · 3D SPACE EDITION  (React port)
    ------------------------------------------------------------
    SMOOTH continuous vertical flight between sections.
+   Project reels are OPTIONAL horizontal galleries:
+     · Vertical scroll / swipe   → glide section-to-section
+                                     (skips the reels entirely)
+     · Horizontal scroll / swipe → browse projects in a reel
+     · On-screen ‹ › arrows      → browse projects with a mouse
    Magnetic settle on idle keeps the scene resting on a station.
    ============================================================ */
 import { useEffect, useRef } from "react";
@@ -56,6 +61,10 @@ export function useSpaceScene(refs, handlers) {
     let rx = 0, ry = 0, trx = 0, try_ = 0;
 
     const stationOf = () => clamp(Math.round(scroll), 0, N - 1);
+    const activeReel = () => {
+      const st = stationOf();
+      return Math.abs(scroll - st) < 0.32 ? panels[st].reel : null;
+    };
 
     /* ---------- Reel sizing & geometry ---------- */
     function sizeReels() {
@@ -90,10 +99,29 @@ export function useSpaceScene(refs, handlers) {
     function setReelActive(reel, slide) {
       reel.items.forEach((it, idx) => it.classList.toggle("is-active", idx === slide));
     }
+    function reelStep(reel, dir) {
+      const ns = clamp(reelNearestSlide(reel) + dir, 0, reel.count - 1);
+      reel.tx = reelTargetX(reel, ns);
+      updateReelArrows(reel, ns);
+    }
     function updateReelArrows(reel, slide) {
       if (reel.prevBtn) reel.prevBtn.disabled = slide <= 0;
       if (reel.nextBtn) reel.nextBtn.disabled = slide >= reel.count - 1;
     }
+
+    /* ---------- Wire the ‹ › arrows React rendered into each reel ---------- */
+    const arrowUnbind = [];
+    panels.forEach((p) => {
+      if (!p.reel) return;
+      const bind = (btn, dir) => {
+        if (!btn) return;
+        const onClick = (e) => { e.stopPropagation(); reelStep(p.reel, dir); };
+        btn.addEventListener("click", onClick);
+        arrowUnbind.push(() => btn.removeEventListener("click", onClick));
+      };
+      bind(p.reel.prevBtn, -1);
+      bind(p.reel.nextBtn, 1);
+    });
 
     /* ============================================================
        AMBIENT MOTES
@@ -293,9 +321,17 @@ export function useSpaceScene(refs, handlers) {
       wheelQuiet = setTimeout(() => { wheelLocked = false; }, WHEEL_QUIET_MS);
     }
     function doWheelStep(axis, sign) {
-      wheelLocked = true; lockAxis = "y"; lockSign = sign;
-      armWheelRelease();
-      stepSection(sign);
+      if (axis === "x") {
+        const reel = activeReel();
+        if (!reel) return;                 // horizontal only means something on a reel
+        wheelLocked = true; lockAxis = "x"; lockSign = sign;
+        armWheelRelease();
+        reelStep(reel, sign);
+      } else {
+        wheelLocked = true; lockAxis = "y"; lockSign = sign;
+        armWheelRelease();
+        stepSection(sign);
+      }
     }
     const onWheel = (e) => {
       e.preventDefault();
@@ -313,6 +349,13 @@ export function useSpaceScene(refs, handlers) {
       const axis = adx > ady ? "x" : "y";
       const sign = (axis === "x" ? dx : dy) > 0 ? 1 : -1;
       if (wheelLocked) {
+        /* Momentum tails jitter diagonally — an axis flip only counts as a
+           new gesture when the new axis clearly dominates. */
+        if (axis !== lockAxis) {
+          const dom = axis === "x" ? adx / Math.max(1, ady) : ady / Math.max(1, adx);
+          if (dom < 2) { lastMag = mag; armWheelRelease(); return; }
+          lastMag = mag; doWheelStep(axis, sign); return;
+        }
         /* Same axis, reversed direction = deliberate new gesture. */
         if (sign !== lockSign && mag > 10) { lastMag = mag; doWheelStep(axis, sign); return; }
         /* Same axis + direction: a real pause in the stream followed by a
@@ -332,7 +375,14 @@ export function useSpaceScene(refs, handlers) {
 
     /* ---------- KEYBOARD ---------- */
     const onKeyDown = (e) => {
+      const reel = activeReel();
       switch (e.key) {
+        case "ArrowRight":
+          if (reel) { e.preventDefault(); reelStep(reel, 1); return; }
+          e.preventDefault(); stepSection(1); return;
+        case "ArrowLeft":
+          if (reel) { e.preventDefault(); reelStep(reel, -1); return; }
+          e.preventDefault(); stepSection(-1); return;
         case "ArrowDown": case "PageDown": case " ":
           e.preventDefault(); stepSection(1); return;
         case "ArrowUp": case "PageUp":
@@ -345,10 +395,11 @@ export function useSpaceScene(refs, handlers) {
     window.addEventListener("keydown", onKeyDown);
 
     /* ---------- TOUCH: ONE swipe = ONE step ---------- */
-    let tStartX = 0, tStartY = 0, tDone = false;
+    let tStartX = 0, tStartY = 0, tReel = null, tDone = false;
     const onTouchStart = (e) => {
       const t = e.touches[0];
       tStartX = t.clientX; tStartY = t.clientY;
+      tReel = activeReel();
       tDone = false;
     };
     const onTouchMove = (e) => {
@@ -358,9 +409,13 @@ export function useSpaceScene(refs, handlers) {
       if (Math.max(Math.abs(dxTot), Math.abs(dyTot)) < 40) return;
       e.preventDefault();
       tDone = true;
-      if (Math.abs(dxTot) < Math.abs(dyTot)) stepSection(dyTot < 0 ? 1 : -1);
+      if (Math.abs(dxTot) > Math.abs(dyTot)) {
+        if (tReel) reelStep(tReel, dxTot < 0 ? 1 : -1);   // swipe left → next project
+      } else {
+        stepSection(dyTot < 0 ? 1 : -1);                  // swipe up → next section
+      }
     };
-    const onTouchEnd = () => { tDone = false; };
+    const onTouchEnd = () => { tReel = null; tDone = false; };
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("touchend", onTouchEnd, { passive: true });
@@ -398,6 +453,7 @@ export function useSpaceScene(refs, handlers) {
       window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("load", onLoad);
+      arrowUnbind.forEach((off) => off());
       motes.forEach((m) => m.el.remove());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
