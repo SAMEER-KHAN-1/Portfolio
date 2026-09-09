@@ -61,3 +61,21 @@ export function SiteCard({ project, onExpand }) {
   );
 }
 
+export function ModelCard({ project, onExpand }) {
+  return (
+    <div className="card card--model glass" data-expandable="" onClick={onExpand}>
+      <div className="card__inner">
+        <div className="model__frame">
+          <span className="model__no">{project.no}</span>
+          <span className="model__kind">{project.kind}</span>
+          <img src={project.img} alt={project.alt} decoding="async" />
+        </div>
+        <div className="model__body">
+          <h4>{project.title} <em>{project.titleEm}</em></h4>
+          <p>{project.desc}</p>
+          <Tags tags={project.tags} />
+        </div>
+      </div>
+    </div>
+  );
+}
