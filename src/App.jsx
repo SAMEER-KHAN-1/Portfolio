@@ -1,8 +1,8 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Backdrop from "./components/Backdrop.jsx";
 import Panel from "./components/Panel.jsx";
 import {
-  HeroPanel, AboutPanel, StackPanel, ContactPanel,
+  HeroPanel, AboutPanel, StackPanel, WorkPanel, ContactPanel,
 } from "./components/panels.jsx";
 import { useSpaceScene } from "./hooks/useSpaceScene.js";
 
@@ -10,6 +10,8 @@ export default function App() {
   const worldRef = useRef(null);
   const glowRef = useRef(null);
   const canvasRef = useRef(null);
+
+  const [reelSlides, setReelSlides] = useState({ work: 0, lab: 0 });
 
   useSpaceScene(
     { worldRef, glowRef, canvasRef },
@@ -24,7 +26,7 @@ export default function App() {
           <HeroPanel />
           <AboutPanel />
           <StackPanel />
-          <Panel section="work" label="Work" />
+          <WorkPanel slide={reelSlides.work} />
           <Panel section="lab" label="Lab" />
           <ContactPanel />
         </div>

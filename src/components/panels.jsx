@@ -1,6 +1,9 @@
 import Panel from "./Panel.jsx";
+import Reel from "./Reel.jsx";
+import { FeatureCard, SiteCard } from "./cards.jsx";
 import { stats } from "../data/about.js";
 import { stackGroups } from "../data/stack.js";
+import { workProjects } from "../data/work.jsx";
 
 /* 00 · HERO */
 export function HeroPanel() {
@@ -52,6 +55,23 @@ export function StackPanel() {
           </div>
         ))}
       </div>
+    </Panel>
+  );
+}
+
+/* 03 · WORK (horizontal reel) */
+export function WorkPanel({ slide, onExpand }) {
+  return (
+    <Panel section="work" label="Work" reel cardClass="reel-card">
+      <Reel eyebrow="(03) — Selected Work" count={workProjects.length} current={slide}>
+        {workProjects.map((p) => (
+          <div className="reel-item" key={p.id}>
+            {p.type === "feature"
+              ? <FeatureCard project={p} onExpand={onExpand} />
+              : <SiteCard project={p} onExpand={onExpand} />}
+          </div>
+        ))}
+      </Reel>
     </Panel>
   );
 }
