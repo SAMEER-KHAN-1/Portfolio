@@ -1,0 +1,48 @@
+/* (04) — The Hardware Lab. A tag may be an object with `hi: true`
+   to get the highlighted `tag--hi` treatment. */
+export const labProjects = [
+  {
+    id: "rc-car",
+    no: "01",
+    kind: "RC / Robotics",
+    img: "/images/model-racecar.jpg",
+    alt: "Custom ESP32-CAM RC car with L298N motor driver",
+    title: "Live-FPV",
+    titleEm: "RC Car",
+    desc: "A first-person RC car that streams live video straight to your phone. An ESP32-CAM handles both the onboard camera feed and the Wi-Fi link, while an L298N dual H-bridge drives the motors off a lithium-cell pack. The phone connects to the car's own Wi-Fi and sends steering & throttle in real time — hitting a top speed of around 23 km/h.",
+    tags: ["ESP32-CAM", "L298N Driver", "Live FPV Feed", "Wi-Fi Control", { label: "23 km/h Top Speed", hi: true }],
+  },
+  {
+    id: "drone",
+    no: "02",
+    kind: "Aerial",
+    img: "/images/model-drone.webp",
+    alt: "Custom carbon-fiber FPV quadcopter drone",
+    title: "Custom",
+    titleEm: "FPV Drone",
+    desc: "A lightweight quadcopter built around a Seeed XIAO ESP32-C3 flight brain and a BNO085 9-DOF IMU for orientation fusion. Four 2300KV brushless motors run on 20A BLHeli_S DShot ESCs, powered by a 3S 1300mAh LiPo. The chassis is a hand-laid carbon-fiber composite with 5-inch tri-blade props and a custom-etched copper PCB.",
+    tags: ["XIAO ESP32-C3", "BNO085 IMU", "BLHeli_S DShot", "2300KV Brushless", "Carbon-Fiber Frame"],
+  },
+  {
+    id: "deauth",
+    no: "03",
+    kind: "Wireless / Security",
+    img: "/images/model-jammer.webp",
+    alt: "ESP8266 module used for Wi-Fi de-authentication research",
+    title: "Wi-Fi",
+    titleEm: "De-auth Tool",
+    desc: "A compact network-security demo built on an ESP8266 module. With a small piece of custom firmware, the board performs 802.11 de-authentication — a controlled way to study how Wi-Fi handshakes behave and how resilient a network is to disruption. Built purely as a hands-on lesson in wireless protocols.",
+    tags: ["ESP8266", "802.11 De-auth", "Embedded C", "Network Research"],
+  },
+  {
+    id: "traffic",
+    no: "04",
+    kind: "Smart City",
+    img: "/images/model-smartcity.jpg",
+    alt: "Arduino smart-city model with ultrasonic adaptive traffic lights",
+    title: "Adaptive",
+    titleEm: "Traffic Grid",
+    desc: "A smart-city traffic system that uses ultrasonic sensors to detect waiting vehicles at each junction. By day it keeps the familiar fixed timing drivers expect; by night — when roads sit empty — it gives green to whoever's actually there, cutting needless waits. Both modes run simultaneously, pairing traditional reliability with sensor-driven efficiency.",
+    tags: ["Arduino Uno", "Ultrasonic Sensors", "Adaptive Timing", "Day / Night Logic", { label: "Energy Saving", hi: true }],
+  },
+];
