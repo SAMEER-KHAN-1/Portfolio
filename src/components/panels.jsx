@@ -1,9 +1,10 @@
 import Panel from "./Panel.jsx";
 import Reel from "./Reel.jsx";
-import { FeatureCard, SiteCard } from "./cards.jsx";
+import { FeatureCard, SiteCard, ModelCard } from "./cards.jsx";
 import { stats } from "../data/about.js";
 import { stackGroups } from "../data/stack.js";
 import { workProjects } from "../data/work.jsx";
+import { labProjects } from "../data/lab.js";
 
 /* 00 · HERO */
 export function HeroPanel() {
@@ -69,6 +70,21 @@ export function WorkPanel({ slide, onExpand }) {
             {p.type === "feature"
               ? <FeatureCard project={p} onExpand={onExpand} />
               : <SiteCard project={p} onExpand={onExpand} />}
+          </div>
+        ))}
+      </Reel>
+    </Panel>
+  );
+}
+
+/* 04 · LAB (horizontal reel) */
+export function LabPanel({ slide, onExpand }) {
+  return (
+    <Panel section="lab" label="Lab" reel cardClass="reel-card">
+      <Reel eyebrow="(04) — The Hardware Lab" count={labProjects.length} current={slide}>
+        {labProjects.map((p) => (
+          <div className="reel-item" key={p.id}>
+            <ModelCard project={p} onExpand={onExpand} />
           </div>
         ))}
       </Reel>

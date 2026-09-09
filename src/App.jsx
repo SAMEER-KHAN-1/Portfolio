@@ -1,8 +1,7 @@
 import { useRef, useState } from "react";
 import Backdrop from "./components/Backdrop.jsx";
-import Panel from "./components/Panel.jsx";
 import {
-  HeroPanel, AboutPanel, StackPanel, WorkPanel, ContactPanel,
+  HeroPanel, AboutPanel, StackPanel, WorkPanel, LabPanel, ContactPanel,
 } from "./components/panels.jsx";
 import { useSpaceScene } from "./hooks/useSpaceScene.js";
 
@@ -27,7 +26,7 @@ export default function App() {
           <AboutPanel />
           <StackPanel />
           <WorkPanel slide={reelSlides.work} />
-          <Panel section="lab" label="Lab" />
+          <LabPanel slide={reelSlides.lab} />
           <ContactPanel />
         </div>
       </div>
