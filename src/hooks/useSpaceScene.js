@@ -35,6 +35,8 @@ export function useSpaceScene(refs, handlers) {
     /* ---------- DOM ---------- */
     const world = refs.worldRef.current;
     const glow = refs.glowRef.current;
+    const loader = refs.loaderRef.current;
+    const hint = refs.hintRef.current;
     const progFill = refs.progFillRef.current;
     const canvas = refs.canvasRef.current;
     if (!world || !canvas) return undefined;
@@ -116,6 +118,7 @@ export function useSpaceScene(refs, handlers) {
       const ns = clamp(reelNearestSlide(reel) + dir, 0, reel.count - 1);
       reel.tx = reelTargetX(reel, ns);
       updateReelArrows(reel, ns);
+      hideHint();
     }
     function updateReelArrows(reel, slide) {
       if (reel.prevBtn) reel.prevBtn.disabled = slide <= 0;
@@ -312,11 +315,13 @@ export function useSpaceScene(refs, handlers) {
        ============================================================ */
     function goToStation(pi) {
       scrollTarget = clamp(pi, 0, N - 1);
+      hideHint();
     }
     // One step per gesture — based on the COMMITTED target so a queued gesture
     // always lands exactly one stage further, never skipping.
     function stepSection(dir) {
       scrollTarget = clamp(Math.round(scrollTarget) + dir, 0, N - 1);
+      hideHint();
     }
     api.current.goToStation = goToStation;
 
@@ -324,6 +329,9 @@ export function useSpaceScene(refs, handlers) {
       const st = stationOf();
       cb.current.onStation?.(st, pad2(st + 1), pad2(N));
     }
+
+    let hintHidden = false;
+    function hideHint() { if (!hintHidden) { hintHidden = true; hint.classList.add("hide"); } }
 
     /* ---------- WHEEL: ONE gesture = ONE step, long or short ---------- */
     /* The first meaningful delta takes the step and LOCKS input; every
@@ -356,6 +364,7 @@ export function useSpaceScene(refs, handlers) {
         armWheelRelease();
         stepSection(sign);
       }
+      hideHint();
     }
     const onWheel = (e) => {
       e.preventDefault();
@@ -438,6 +447,7 @@ export function useSpaceScene(refs, handlers) {
       } else {
         stepSection(dyTot < 0 ? 1 : -1);                  // swipe up → next section
       }
+      hideHint();
     };
     const onTouchEnd = () => { tReel = null; tDone = false; };
     window.addEventListener("touchstart", onTouchStart, { passive: true });
@@ -457,11 +467,15 @@ export function useSpaceScene(refs, handlers) {
     /* ============================================================
        BOOT
        ============================================================ */
+    const timers = [];
     resize();
     panels.forEach((p) => { if (p.reel) { setReelActive(p.reel, 0); updateReelArrows(p.reel, 0); } });
     syncHUD();
     scroll = 0; scrollTarget = 0;
     rafId = requestAnimationFrame(tick);
+    timers.push(setTimeout(() => loader.classList.add("done"), 450));
+    timers.push(setTimeout(() => { loader.style.display = "none"; }, 1400));
+    timers.push(setTimeout(hideHint, 6000));
     // Late webfont / image loads can shift the reel metrics — re-measure once.
     const onLoad = () => resize();
     if (document.readyState !== "complete") window.addEventListener("load", onLoad);
@@ -470,6 +484,7 @@ export function useSpaceScene(refs, handlers) {
     return () => {
       cancelAnimationFrame(rafId);
       clearTimeout(wheelQuiet);
+      timers.forEach(clearTimeout);
       window.removeEventListener("resize", resize);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKeyDown);
@@ -480,6 +495,9 @@ export function useSpaceScene(refs, handlers) {
       window.removeEventListener("load", onLoad);
       arrowUnbind.forEach((off) => off());
       motes.forEach((m) => m.el.remove());
+      loader.classList.remove("done");
+      loader.style.removeProperty("display");
+      hint.classList.remove("hide");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -435,6 +435,22 @@ em { font-style: normal; }
 .hud-hint.hide { opacity: 0; pointer-events: none; }
 
 /* ============================================================
+   LOADER
+   ============================================================ */
+.loader {
+  position: fixed; inset: 0; z-index: 60; display: grid; place-items: center;
+  background: var(--bg); transition: opacity .8s var(--ease), visibility .8s;
+}
+.loader.done { opacity: 0; visibility: hidden; }
+.loader__core {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #fffbe6, #ffe48d 46%, #c9a94f 100%);
+  box-shadow: 0 0 60px -10px var(--accent-glow);
+  animation: bob 3s ease-in-out infinite;
+}
+.loader__txt { margin-top: 22px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 920px) {
