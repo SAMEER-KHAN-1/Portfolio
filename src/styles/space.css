@@ -435,6 +435,45 @@ em { font-style: normal; }
 .hud-hint.hide { opacity: 0; pointer-events: none; }
 
 /* ============================================================
+   DETAIL OVERLAY (card flies forward & expands)
+   ============================================================ */
+.detail {
+  position: fixed; inset: 0; z-index: 40;
+  display: grid; place-items: center; padding: clamp(20px, 5vh, 60px);
+  background: rgba(1, 30, 26, 0.76);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  opacity: 0; pointer-events: none;
+  transition: opacity .45s var(--ease);
+}
+.detail.open { opacity: 1; pointer-events: auto; }
+.detail__panel {
+  width: min(1040px, 94vw); max-height: 88vh; overflow: auto;
+  transform: scale(0.86) translateY(20px); opacity: 0;
+  transition: transform .55s var(--ease), opacity .45s var(--ease);
+}
+.detail.open .detail__panel { transform: scale(1) translateY(0); opacity: 1; }
+.detail__panel .card__inner { box-shadow: 0 40px 110px -40px rgba(0,16,13,0.8), 0 0 80px -26px var(--accent-glow); }
+.detail__open {
+  display: inline-flex; align-items: center; gap: 9px; margin-top: 4px;
+  padding: 13px 24px; border-radius: 100px; background: var(--accent); color: #013e37; font-weight: 500; font-size: 15px;
+  transition: transform .3s var(--ease);
+}
+.detail__open:hover { transform: translateY(-2px); }
+.detail__close {
+  position: fixed; top: 24px; right: 26px; z-index: 41;
+  width: 46px; height: 46px; border-radius: 50%; cursor: pointer;
+  background: rgba(255,239,179,0.09); border: 1px solid var(--line); color: var(--text);
+  font-size: 22px; line-height: 1; display: grid; place-items: center;
+  transition: background .25s, transform .25s;
+}
+.detail__close:hover { background: rgba(255,239,179,0.2); transform: rotate(90deg); }
+
+/* the cloned model/feature card inside detail can stretch a bit */
+.detail__panel .card--site .site__meta,
+.detail__panel .card--model .model__body { gap: 16px; }
+.detail__hint { display: block; text-align: center; margin-top: 18px; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-dim); }
+
+/* ============================================================
    LOADER
    ============================================================ */
 .loader {

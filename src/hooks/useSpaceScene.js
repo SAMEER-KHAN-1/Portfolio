@@ -39,6 +39,7 @@ export function useSpaceScene(refs, handlers) {
     const hint = refs.hintRef.current;
     const progFill = refs.progFillRef.current;
     const canvas = refs.canvasRef.current;
+    const detailOpen = refs.detailOpenRef;
     if (!world || !canvas) return undefined;
 
     /* ---------- Panels & reels ---------- */
@@ -367,6 +368,7 @@ export function useSpaceScene(refs, handlers) {
       hideHint();
     }
     const onWheel = (e) => {
+      if (detailOpen.current) return;
       e.preventDefault();
       const dx = e.deltaX, dy = e.deltaY;
       const adx = Math.abs(dx), ady = Math.abs(dy);
@@ -408,6 +410,7 @@ export function useSpaceScene(refs, handlers) {
 
     /* ---------- KEYBOARD ---------- */
     const onKeyDown = (e) => {
+      if (detailOpen.current) { if (e.key === "Escape") cb.current.onCloseDetail?.(); return; }
       const reel = activeReel();
       switch (e.key) {
         case "ArrowRight":
@@ -430,13 +433,14 @@ export function useSpaceScene(refs, handlers) {
     /* ---------- TOUCH: ONE swipe = ONE step ---------- */
     let tStartX = 0, tStartY = 0, tReel = null, tDone = false;
     const onTouchStart = (e) => {
+      if (detailOpen.current) return;
       const t = e.touches[0];
       tStartX = t.clientX; tStartY = t.clientY;
       tReel = activeReel();
       tDone = false;
     };
     const onTouchMove = (e) => {
-      if (tDone) return;
+      if (tDone || detailOpen.current) return;
       const t = e.touches[0];
       const dxTot = t.clientX - tStartX, dyTot = t.clientY - tStartY;
       if (Math.max(Math.abs(dxTot), Math.abs(dyTot)) < 40) return;
